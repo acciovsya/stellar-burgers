@@ -12,6 +12,10 @@
   border-radius: 40px;
   min-width: 576px;
   box-sizing: border-box;
+
+  /* не уверен, что самое правильное 
+  решение в данном контексте */
+  isolation: isolate;
 }
 
 .order_info {
