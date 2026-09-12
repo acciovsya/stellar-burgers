@@ -4,11 +4,11 @@ import { IngredientDetailsUIProps } from './type';
 
 export const IngredientDetailsUI: FC<IngredientDetailsUIProps> = memo(
   ({ ingredientData }) => {
-    const { name, image_large, calories, proteins, fat, carbohydrates } =
+    const { _id, name, image_large, calories, proteins, fat, carbohydrates } =
       ingredientData;
 
     return (
-      <div className={styles.content}>
+      <div className={styles.content} data-testid={`ingredient-details-${_id}`}>
         <img
           className={styles.img}
           alt='изображение ингредиента.'

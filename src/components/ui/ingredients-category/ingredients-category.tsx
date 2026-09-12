@@ -3,6 +3,12 @@ import { forwardRef } from 'react';
 import { TIngredientsCategoryUIProps } from './type';
 import { BurgerIngredient } from '@components';
 
+const categorySlugByTitle: Record<string, string> = {
+  Булки: 'bun',
+  Начинки: 'main',
+  Соусы: 'sauce'
+};
+
 export const IngredientsCategoryUI = forwardRef<
   HTMLUListElement,
   TIngredientsCategoryUIProps
@@ -11,7 +17,11 @@ export const IngredientsCategoryUI = forwardRef<
     <h3 className='text text_type_main-medium mt-10 mb-6' ref={titleRef}>
       {title}
     </h3>
-    <ul className={styles.items} ref={ref}>
+    <ul
+      className={styles.items}
+      ref={ref}
+      data-testid={`ingredients-list-${categorySlugByTitle[title] ?? title}`}
+    >
       {ingredients.map((ingredient) => (
         <BurgerIngredient
           ingredient={ingredient}
