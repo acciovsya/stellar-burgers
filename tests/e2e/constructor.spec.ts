@@ -5,8 +5,8 @@ const getIngredientId = async (card: Locator): Promise<string> => {
   return testId!.replace(/^ingredient-/, '');
 };
 
-test.describe('Страница конструктора бургера', () => {
-  test.describe('Добавление ингредиента в конструктор', () => {
+test.describe('[burgerConstructor] - страница', () => {
+  test.describe('добавление ингредиента', () => {
     test.beforeEach(async ({ page, context }) => {
       await context.routeFromHAR('tests/hars/ingredients.har', {
         url: '**/ingredients'
@@ -51,7 +51,7 @@ test.describe('Страница конструктора бургера', () => 
     });
   });
 
-  test.describe('Модальное окно ингредиента', () => {
+  test.describe('модальное окно ингредиента', () => {
     test.beforeEach(async ({ page, context }) => {
       await context.routeFromHAR('tests/hars/ingredients.har', {
         url: '**/ingredients'
@@ -63,54 +63,58 @@ test.describe('Страница конструктора бургера', () => 
           .getByTestId('ingredients-list-bun')
           .getByTestId(/^ingredient-/)
           .first()
-      ).toBeAttached();
-    });
-
-    test('открывается по клику и показывает данные именно выбранного ингредиента', async ({
-      page
-    }) => {
-      const card = page.getByTestId(/^ingredient-/).nth(1);
-      const ingredientId = await getIngredientId(card);
-
-      await card.click();
-
-      const modal = page.getByTestId('modal');
-      await expect(modal).toBeVisible();
-      await expect(
-        modal.getByTestId(`ingredient-details-${ingredientId}`)
       ).toBeVisible();
     });
 
-    test('закрывается по клику на крестик', async ({ page }) => {
-      await page
-        .getByTestId(/^ingredient-/)
-        .first()
-        .click();
+    test.describe('открытие', () => {
+      test('показывает данные именно выбранного ингредиента', async ({
+        page
+      }) => {
+        const card = page.getByTestId(/^ingredient-/).nth(1);
+        const ingredientId = await getIngredientId(card);
 
-      const modal = page.getByTestId('modal');
-      await expect(modal).toBeVisible();
+        await card.click();
 
-      await page.getByTestId('modal-close-button').click();
-      await expect(modal).not.toBeVisible();
+        const modal = page.getByTestId('modal');
+        await expect(modal).toBeVisible();
+        await expect(
+          modal.getByTestId(`ingredient-details-${ingredientId}`)
+        ).toBeVisible();
+      });
     });
 
-    test('закрывается по клику на оверлей', async ({ page }) => {
-      await page
-        .getByTestId(/^ingredient-/)
-        .first()
-        .click();
+    test.describe('закрытие', () => {
+      test('по клику на крестик', async ({ page }) => {
+        await page
+          .getByTestId(/^ingredient-/)
+          .first()
+          .click();
 
-      const modal = page.getByTestId('modal');
-      await expect(modal).toBeVisible();
+        const modal = page.getByTestId('modal');
+        await expect(modal).toBeVisible();
 
-      await page
-        .getByTestId('modal-overlay')
-        .click({ position: { x: 5, y: 5 } });
-      await expect(modal).not.toBeVisible();
+        await page.getByTestId('modal-close-button').click();
+        await expect(modal).not.toBeVisible();
+      });
+
+      test('по клику на оверлей', async ({ page }) => {
+        await page
+          .getByTestId(/^ingredient-/)
+          .first()
+          .click();
+
+        const modal = page.getByTestId('modal');
+        await expect(modal).toBeVisible();
+
+        await page
+          .getByTestId('modal-overlay')
+          .click({ position: { x: 5, y: 5 } });
+        await expect(modal).not.toBeVisible();
+      });
     });
   });
 
-  test.describe('Создание заказа', () => {
+  test.describe('cоздание заказа', () => {
     test.beforeEach(async ({ page, context }) => {
       await context.addCookies([
         {
@@ -145,34 +149,7 @@ test.describe('Страница конструктора бургера', () => 
       ).toBeAttached();
     });
 
-    const addBun = async (page: Page) => {
-      await page
-        .getByTestId('ingredients-list-bun')
-        .getByTestId(/^ingredient-/)
-        .first()
-        .getByRole('button', { name: 'Добавить' })
-        .click();
-    };
-
-    const addMain = async (page: Page) => {
-      await page
-        .getByTestId('ingredients-list-main')
-        .getByTestId(/^ingredient-/)
-        .first()
-        .getByRole('button', { name: 'Добавить' })
-        .click();
-    };
-
-    const addSauce = async (page: Page) => {
-      await page
-        .getByTestId('ingredients-list-sauce')
-        .getByTestId(/^ingredient-/)
-        .first()
-        .getByRole('button', { name: 'Добавить' })
-        .click();
-    };
-
-    test('создаёт заказ: отправляет выбранные ингредиенты, показывает номер и очищает конструктор', async ({
+    test('отправляет выбранные ингредиенты, показывает номер и очищает конструктор', async ({
       page
     }) => {
       const bunId = await getIngredientId(
@@ -194,9 +171,26 @@ test.describe('Страница конструктора бургера', () => 
           .first()
       );
 
-      await addBun(page);
-      await addMain(page);
-      await addSauce(page);
+      await page
+        .getByTestId('ingredients-list-bun')
+        .getByTestId(/^ingredient-/)
+        .first()
+        .getByRole('button', { name: 'Добавить' })
+        .click();
+
+      await page
+        .getByTestId('ingredients-list-main')
+        .getByTestId(/^ingredient-/)
+        .first()
+        .getByRole('button', { name: 'Добавить' })
+        .click();
+
+      await page
+        .getByTestId('ingredients-list-sauce')
+        .getByTestId(/^ingredient-/)
+        .first()
+        .getByRole('button', { name: 'Добавить' })
+        .click();
 
       const [request] = await Promise.all([
         page.waitForRequest(
@@ -206,7 +200,10 @@ test.describe('Страница конструктора бургера', () => 
           (res) =>
             res.url().includes('/orders') && res.request().method() === 'POST'
         ),
-        page.getByTestId('order-panel').locator('button').click()
+        page
+          .getByTestId('order-panel')
+          .getByRole('button', { name: 'Оформить заказ' })
+          .click()
       ]);
 
       const body = JSON.parse(request.postData()!);
