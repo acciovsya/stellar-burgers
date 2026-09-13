@@ -22,7 +22,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     {constructorItems.bun ? (
       <div
         className={`${styles.element} mb-4 mr-4`}
-        data-testid='constructor-bun-top'
+        data-testid={`constructor-bun-top-${constructorItems.bun._id}`}
       >
         <ConstructorElement
           type='top'
@@ -35,6 +35,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     ) : (
       <div
         className={`${styles.noBuns} ${styles.noBunsTop} ml-8 mb-4 mr-5 text text_type_main-default`}
+        data-testid='constructor-select-bun-top'
       >
         Выберите булки
       </div>
@@ -62,7 +63,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     {constructorItems.bun ? (
       <div
         className={`${styles.element} mt-4 mr-4`}
-        data-testid='constructor-bun-bottom'
+        data-testid={`constructor-bun-bottom-${constructorItems.bun._id}`}
       >
         <ConstructorElement
           type='bottom'
@@ -75,6 +76,7 @@ export const BurgerConstructorUI: FC<BurgerConstructorUIProps> = ({
     ) : (
       <div
         className={`${styles.noBuns} ${styles.noBunsBottom} ml-8 mb-4 mr-5 text text_type_main-default`}
+        data-testid='constructor-select-bun-bottom'
       >
         Выберите булки
       </div>

@@ -1,4 +1,4 @@
-import { test, expect, Locator, Page } from '@playwright/test';
+import { test, expect, Locator } from '@playwright/test';
 
 const getIngredientId = async (card: Locator): Promise<string> => {
   const testId = await card.getAttribute('data-testid');
@@ -23,15 +23,21 @@ test.describe('[burgerConstructor] - страница', () => {
     });
 
     test('добавляется булка', async ({ page }) => {
-      await page
+      const bun = page
         .getByTestId('ingredients-list-bun')
         .getByTestId(/^ingredient-/)
-        .first()
-        .getByRole('button', { name: 'Добавить' })
-        .click();
+        .first();
+      const bunId = await getIngredientId(bun);
 
-      await expect(page.getByTestId('constructor-bun-top')).toBeVisible();
-      await expect(page.getByTestId('constructor-bun-bottom')).toBeVisible();
+      await bun.getByRole('button', { name: 'Добавить' }).click();
+
+      // добавлена сверка по id
+      await expect(
+        page.getByTestId(`constructor-bun-top-${bunId}`)
+      ).toBeVisible();
+      await expect(
+        page.getByTestId(`constructor-bun-bottom-${bunId}`)
+      ).toBeVisible();
     });
 
     test('добавляется начинка', async ({ page }) => {
@@ -139,7 +145,8 @@ test.describe('[burgerConstructor] - страница', () => {
 
       await page.goto('/', { waitUntil: 'domcontentloaded' });
 
-      await expect(page.getByText('e2e-test')).toBeVisible();
+      // больше не ищем на всй странице
+      await expect(page.getByTestId('user-name')).toHaveText('e2e-test');
 
       await expect(
         page
@@ -216,6 +223,16 @@ test.describe('[burgerConstructor] - страница', () => {
       await expect(
         page.getByTestId('constructor-ingredients-list')
       ).toContainText('Выберите начинку');
+
+      // добавлена проверка на очистку булок по плейсхолдеру
+      // возможно нижняя булка лишняя, так как она всегда добалвяется в паре с верхней
+      // то же касается и проверки добавления, где нижняя булка в целом тоже не так важна
+      await expect(
+        page.getByTestId('constructor-select-bun-top')
+      ).toContainText('Выберите булки');
+      await expect(
+        page.getByTestId('constructor-select-bun-bottom')
+      ).toContainText('Выберите булки');
 
       await page.getByTestId('modal-close-button').click();
       await expect(modal).not.toBeVisible();

@@ -3,6 +3,7 @@ import {
   addIngredient,
   burgerConstructorReducer,
   clearConstructor,
+  initialState,
   moveIngredient,
   removeIngredient
 } from './burger-constructor-slice';
@@ -50,10 +51,7 @@ describe('[burgerConstructorSlice] - редьюсер', () => {
   test('возвращает начальное состояние при неизвестном экшене', () => {
     const result = burgerConstructorReducer(undefined, { type: 'UNKNOWN' });
 
-    expect(result).toEqual({
-      bun: null,
-      ingredients: []
-    });
+    expect(result).toEqual(initialState);
   });
 
   describe('addIngredient', () => {
@@ -106,7 +104,7 @@ describe('[burgerConstructorSlice] - редьюсер', () => {
       };
       const action = clearConstructor();
       const result = burgerConstructorReducer(state, action);
-      expect(result).toEqual({ bun: null, ingredients: [] });
+      expect(result).toEqual(initialState);
     });
   });
 
