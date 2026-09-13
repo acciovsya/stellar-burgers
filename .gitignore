@@ -2,3 +2,14 @@ node_modules
 .env
 .idea
 dist
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
+/tests/e2e/record.ts
+
+# Jest
+/coverage/
